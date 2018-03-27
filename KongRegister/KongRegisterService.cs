@@ -15,7 +15,7 @@ namespace KongRegister
     public class KongRegisterService : ABackgroundService
     {
         private readonly KongConfig _kongConfig;
-        private string _kongUrl;
+        private readonly string _kongUrl;
         private string _localIP;
         private string _localPort;
         private string _targetId;
