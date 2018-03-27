@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KongRegister", "KongRegister\KongRegister.csproj", "{8D040C13-0188-4000-B625-5B99233B9252}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D040C13-0188-4000-B625-5B99233B9252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D040C13-0188-4000-B625-5B99233B9252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D040C13-0188-4000-B625-5B99233B9252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D040C13-0188-4000-B625-5B99233B9252}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C9F2E05E-AF3D-4060-9962-4B43596BA76B}
+	EndGlobalSection
+EndGlobal
