@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KongRegister", "src\KongReg
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A475F7BC-453F-4427-84B8-700ADBED66B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "samples\WebApi\WebApi.csproj", "{1FAC66A0-BBAB-4A98-8C38-E940348CED1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,12 +21,17 @@ Global
 		{2322B44F-637F-45A6-8830-8D5F0077D67C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2322B44F-637F-45A6-8830-8D5F0077D67C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2322B44F-637F-45A6-8830-8D5F0077D67C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FAC66A0-BBAB-4A98-8C38-E940348CED1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FAC66A0-BBAB-4A98-8C38-E940348CED1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FAC66A0-BBAB-4A98-8C38-E940348CED1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FAC66A0-BBAB-4A98-8C38-E940348CED1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2322B44F-637F-45A6-8830-8D5F0077D67C} = {C3377FB4-9048-4CF0-B634-4AA5257A54B7}
+		{1FAC66A0-BBAB-4A98-8C38-E940348CED1B} = {A475F7BC-453F-4427-84B8-700ADBED66B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9F2E05E-AF3D-4060-9962-4B43596BA76B}
