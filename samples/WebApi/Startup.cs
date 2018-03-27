@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KongRegister;
+﻿using KongRegister;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace WebApi
 {
@@ -25,8 +19,8 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<KongRegisterConfig>(Configuration.GetSection("KongRegister"));
             services.AddSingleton<IHostedService, KongRegisterService>();
-            services.Configure<KongConfig>(Configuration.GetSection("KongRegisterConfig"));
             services.AddMvc();
         }
 
