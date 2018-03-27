@@ -23,6 +23,12 @@ namespace KongRegister
         private readonly ILogger<KongRegisterService> _logger;
         private readonly IServer _server;
 
+        /// <summary>
+        /// Service for registering the hosted application in Kong API Gateway.
+        /// </summary>
+        /// <param name="kongConfig"></param>
+        /// <param name="logger"></param>
+        /// <param name="server"></param>
         public KongRegisterService(IOptions<KongConfig> kongConfig, ILogger<KongRegisterService> logger, IServer server)
         {
 
