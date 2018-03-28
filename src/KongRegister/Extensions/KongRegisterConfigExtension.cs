@@ -14,12 +14,14 @@ namespace KongRegister.Extensions
                 throw new ArgumentNullException(nameof(kongRegisterConfig.KongApiUrl));
             }
 
-            if (kongRegisterConfig.TargetHostDiscovery == null || (!kongRegisterConfig.TargetHostDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase) && kongRegisterConfig.TargetHost == null))
+            if (kongRegisterConfig.TargetHostDiscovery == null || 
+                (!kongRegisterConfig.TargetHostDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase) && kongRegisterConfig.TargetHost == null))
             {
                 throw new ArgumentNullException(nameof(kongRegisterConfig.TargetHost));
             }
 
-            if (kongRegisterConfig.TargetPortDiscovery == null || (!kongRegisterConfig.TargetPortDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase) && kongRegisterConfig.TargetPort == null))
+            if (kongRegisterConfig.TargetPortDiscovery == null || 
+                (!kongRegisterConfig.TargetPortDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase) && kongRegisterConfig.TargetPort == null))
             {
                 throw new ArgumentNullException(nameof(kongRegisterConfig.TargetPort));
             }
