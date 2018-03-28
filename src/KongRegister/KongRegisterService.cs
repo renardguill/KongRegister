@@ -17,8 +17,8 @@ namespace KongRegister
     {
         private readonly KongRegisterConfig _kongConfig;
         private readonly string _kongUrl;
-        private string _localIP;
-        private string _localPort;
+        private string _targetHost;
+        private int _targetPort;
         private string _targetId;
 
         private readonly ILogger<KongRegisterService> _logger;
@@ -78,30 +78,32 @@ namespace KongRegister
 
             _logger.LogInformation("Registering target in Kong");
 
-            if (_kongConfig.TargetHostDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
+            if (_kongConfig.TargetHostDiscovery != null 
+                && _kongConfig.TargetHostDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
             {
                 using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
                 {
                     socket.Connect("1.2.3.4", 65530);
                     IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                    _localIP = endPoint.Address.ToString();
+                    _targetHost = endPoint.Address.ToString();
                 }
             }
             else
             {
-                _localIP = _kongConfig.TargetHost;
+                _targetHost = _kongConfig.TargetHost;
             }
 
-            if (_kongConfig.TargetPortDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
+            if (_kongConfig.TargetPortDiscovery != null 
+                && _kongConfig.TargetPortDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
             {
                 var features = _server.Features;
                 var addresses = features.Get<IServerAddressesFeature>();
                 var address = addresses.Addresses.First();
-                _localPort = new Uri(address).Port.ToString();
+                _targetPort = new Uri(address).Port;
             }
             else
             {
-                _localPort = _kongConfig.TargetPort;
+                _targetPort = (int)_kongConfig.TargetPort;
             }
 
             try
@@ -111,13 +113,20 @@ namespace KongRegister
                     client.DefaultRequestHeaders.Add(_kongConfig.KongApiKeyHeader, _kongConfig.KongApiKey);
                     var response = await client.PostAsJsonAsync(_kongUrl, new
                     {
-                        target = string.Join(":", _localIP, _localPort),
+                        target = string.Join(":", _targetHost, _targetPort.ToString()),
                         weight = _kongConfig.TargetWeight
                     });
-                    var created = await response.Content.ReadAsAsync<dynamic>();
-
-                    _logger.LogInformation($"Target {created.id} registered in Kong.");
-                    return created.id;
+                    if (response.StatusCode == HttpStatusCode.Created)
+                    {
+                        var created = await response.Content.ReadAsAsync<dynamic>();
+                        _logger.LogInformation($"Target {created.id} registered in Kong.");
+                        return created.id;
+                    }
+                    else
+                    {
+                        _logger.LogError($"Failed to register target in Kong : {(int)response.StatusCode} {response.ReasonPhrase}");
+                        return string.Empty;
+                    }
                 }
             }
             catch (Exception ex)

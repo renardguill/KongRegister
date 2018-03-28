@@ -10,7 +10,7 @@
         public string TargetHostDiscovery { get; set; }
         public string TargetHost { get; set; }
         public string TargetPortDiscovery { get; set; }
-        public string TargetPort { get; set; }
+        public int? TargetPort { get; set; }
         public int? TargetWeight { get; set; }
     }
 }
