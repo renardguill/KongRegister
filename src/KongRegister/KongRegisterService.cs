@@ -9,15 +9,16 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using KongRegister.Extensions;
 
 namespace KongRegister
 {
     public class KongRegisterService : ABackgroundService
     {
-        private readonly KongConfig _kongConfig;
+        private readonly KongRegisterConfig _kongConfig;
         private readonly string _kongUrl;
-        private string _localIP;
-        private string _localPort;
+        private string _targetHost;
+        private int _targetPort;
         private string _targetId;
 
         private readonly ILogger<KongRegisterService> _logger;
@@ -29,18 +30,23 @@ namespace KongRegister
         /// <param name="kongConfig"></param>
         /// <param name="logger"></param>
         /// <param name="server"></param>
-        public KongRegisterService(IOptions<KongConfig> kongConfig, ILogger<KongRegisterService> logger, IServer server)
+        public KongRegisterService(IOptions<KongRegisterConfig> kongConfig, ILogger<KongRegisterService> logger, IServer server)
         {
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _server = server ?? throw new ArgumentNullException(nameof(server));
             _kongConfig = kongConfig.Value ?? throw new ArgumentNullException(nameof(kongConfig));
+            try
+            {
+                _kongConfig.Validate();
+            }
+            catch (Exception ex)
+            {
 
-            _kongUrl =
-                _kongConfig.BaseUrl +
-                _kongConfig.UpstreamsUri +
-                _kongConfig.UpstreamNameUri +
-                _kongConfig.TargetsUri;
+                _logger.LogError($"Error configuration file {ex.Message}");
+            }
+
+            _kongUrl = $"{_kongConfig.KongApiUrl}/upstreams/{_kongConfig.UpstreamId}/targets";
 
         }
 
@@ -71,18 +77,34 @@ namespace KongRegister
         {
 
             _logger.LogInformation("Registering target in Kong");
-            var features = _server.Features;
-            var addresses = features.Get<IServerAddressesFeature>();
-            var address = addresses.Addresses.First();
 
-            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+            if (_kongConfig.TargetHostDiscovery != null 
+                && _kongConfig.TargetHostDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
             {
-                socket.Connect("1.2.3.4", 65530);
-                IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                _localIP = endPoint.Address.ToString();
+                using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+                {
+                    socket.Connect("1.2.3.4", 65530);
+                    IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+                    _targetHost = endPoint.Address.ToString();
+                }
             }
-            _localPort = new Uri(address).Port.ToString();
+            else
+            {
+                _targetHost = _kongConfig.TargetHost;
+            }
 
+            if (_kongConfig.TargetPortDiscovery != null 
+                && _kongConfig.TargetPortDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var features = _server.Features;
+                var addresses = features.Get<IServerAddressesFeature>();
+                var address = addresses.Addresses.First();
+                _targetPort = new Uri(address).Port;
+            }
+            else
+            {
+                _targetPort = (int)_kongConfig.TargetPort;
+            }
 
             try
             {
@@ -91,13 +113,20 @@ namespace KongRegister
                     client.DefaultRequestHeaders.Add(_kongConfig.KongApiKeyHeader, _kongConfig.KongApiKey);
                     var response = await client.PostAsJsonAsync(_kongUrl, new
                     {
-                        target = string.Join(":", _localIP, _localPort),
+                        target = string.Join(":", _targetHost, _targetPort.ToString()),
                         weight = _kongConfig.TargetWeight
                     });
-                    var created = await response.Content.ReadAsAsync<dynamic>();
-
-                    _logger.LogInformation($"Target {created.id} registered in Kong.");
-                    return created.id;
+                    if (response.StatusCode == HttpStatusCode.Created)
+                    {
+                        var created = await response.Content.ReadAsAsync<dynamic>();
+                        _logger.LogInformation($"Target {created.id} registered in Kong.");
+                        return created.id;
+                    }
+                    else
+                    {
+                        _logger.LogError($"Failed to register target in Kong : {(int)response.StatusCode} {response.ReasonPhrase}");
+                        return string.Empty;
+                    }
                 }
             }
             catch (Exception ex)
