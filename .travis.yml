@@ -1,6 +1,6 @@
 language: csharp
 mono: none
-dotnet: 2.0.4
+dotnet: 2.1.101
 script:
   - dotnet restore
   - dotnet build ./src/KongRegister/
