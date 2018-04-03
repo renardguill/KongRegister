@@ -2,6 +2,6 @@ language: csharp
 mono: none
 dotnet: 2.1.101
 script:
-  - dotnet restore
-  - dotnet build ./src/KongRegister/
-  - dotnet build ./samples/WebApi/
+  - dotnet restore -r ubuntu-x64
+  - dotnet build ./src/KongRegister/ -r ubuntu-x64
+  - dotnet build ./samples/WebApi/ -r ubuntu-x64
