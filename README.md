@@ -1,4 +1,4 @@
-# ![Logo](resources/KongRegisterLogo.png) KongRegister
+# ![Logo](https://raw.githubusercontent.com/renardguill/KongRegister/master/resources/KongRegisterLogo.png) KongRegister
 
 [![License](https://img.shields.io/github/license/renardguill/KongRegister.svg)](LICENSE)
 [![NuGet version](https://img.shields.io/nuget/v/KongRegister.svg)](https://www.nuget.org/packages/KongRegister/)
