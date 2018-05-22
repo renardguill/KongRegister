@@ -18,7 +18,7 @@ Add the following configuration in your appsettings.json :
 
 ```json
 "KongRegister": {
-    "OnStartup" : True,
+    "OnStartup" : true,
     "KongApiUrl": "http://YourKongApiUrl:8081",
     "KongApiKeyHeader": "YourApikeyHeader",
     "KongApiKey": "YourApiKey",
@@ -109,7 +109,7 @@ The configuration must be define in the appsettings.json under a root section th
 
 ```json
 "KongRegister": {
-    "OnStartup" : True,
+    "OnStartup" : true,
     "KongApiUrl": "http://YourKongApiUrl:8081",
     "KongApiKeyHeader": "YourApikeyHeader",
     "KongApiKey": "YourApiKey",
