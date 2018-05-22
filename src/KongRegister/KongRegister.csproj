@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.8</Version>
+    <Version>1.1.0</Version>
     <Authors>Guillaume Renard</Authors>
     <Company></Company>
     <PackageProjectUrl>https://github.com/renardguill/KongRegister</PackageProjectUrl>
