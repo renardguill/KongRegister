@@ -53,23 +53,37 @@ namespace KongRegister
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation($"KongRegisterService is starting.");
-
-            stoppingToken.Register(() =>
-                    _logger.LogInformation($"KongRegister background task is stopping."));
-
-
-            if (!stoppingToken.IsCancellationRequested)
+            if (_kongConfig.Disabled || !_kongConfig.OnStartup)
             {
-                _logger.LogInformation($"KongRegister background task is doing background work.");
-                _targetId = await RegisterAsync();
+                _logger.LogInformation($"KongRegisterService is disabled.");
+            }
+            else
+            {
+                _logger.LogInformation($"KongRegisterService is starting.");
+
+                stoppingToken.Register(() =>
+                        _logger.LogInformation($"KongRegister background task is stopping."));
+
+
+                if (!stoppingToken.IsCancellationRequested)
+                {
+                    _logger.LogInformation($"KongRegister background task is doing background work.");
+                    _targetId = await RegisterAsync();
+                }
             }
         }
 
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            await UnregisterAsync(_targetId);
+            if (_kongConfig.Disabled || !_kongConfig.OnStartup)
+            {
+                _logger.LogInformation($"KongRegisterService is disabled.");
+            }
+            else
+            {
+                await UnregisterAsync(_targetId);
+            }
         }
 
 
