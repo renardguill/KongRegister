@@ -20,6 +20,19 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<KongRegisterConfig>(Configuration.GetSection("KongRegister"));
+            services.PostConfigure<KongRegisterConfig>(kongConf =>
+            {
+                if (bool.TryParse(Configuration.GetValue<string>("KONGREGISTER_DISABLED"), out bool disabled))
+                {
+                    kongConf.Disabled = disabled;
+                }
+
+                if (bool.TryParse(Configuration.GetValue<string>("KONGREGISTER_ONSTARTUP"), out bool onStratup))
+                {
+                    kongConf.OnStartup = onStratup;
+                }
+
+            });
             services.AddSingleton<IHostedService, KongRegisterService>();
             services.AddMvc();
         }

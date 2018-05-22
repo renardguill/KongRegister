@@ -2,7 +2,9 @@
 {
     public class KongRegisterConfig
     {
-   
+
+        public bool Disabled { get; set; } = false;
+        public bool OnStartup { get; set; } = false;
         public string KongApiUrl { get; set; }
         public string KongApiKeyHeader { get; set; }
         public string KongApiKey { get; set; }

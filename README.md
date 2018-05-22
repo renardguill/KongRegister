@@ -18,14 +18,13 @@ Add the following configuration in your appsettings.json :
 
 ```json
 "KongRegister": {
+    "OnStartup" : True,
     "KongApiUrl": "http://YourKongApiUrl:8081",
     "KongApiKeyHeader": "YourApikeyHeader",
     "KongApiKey": "YourApiKey",
     "UpstreamId": "YourUpstreamId",
     "TargetHostDiscovery": "dynamic",
-    "TargetHost": "YourTargetHostNameOrIp",
     "TargetPortDiscovery": "dynamic",
-    "TargetPort": 5000,
     "TargetWeight": 1000
   }
 ```
@@ -42,6 +41,19 @@ Add those two services in the ConfigureServices method :
 public void ConfigureServices(IServiceCollection services)
 {
     services.Configure<KongRegisterConfig>(Configuration.GetSection("KongRegister"));
+    services.PostConfigure<KongRegisterConfig>(kongConf =>
+    {
+        if (bool.TryParse(Configuration.GetValue<string>("KONGREGISTER_DISABLED"), out bool disabled))
+        {
+            kongConf.Disabled = disabled;
+        }
+
+        if (bool.TryParse(Configuration.GetValue<string>("KONGREGISTER_ONSTARTUP"), out bool onStratup))
+        {
+            kongConf.OnStartup = onStratup;
+        }
+
+    });
     services.AddSingleton<IHostedService, KongRegisterService>();
     ...
 }
@@ -97,6 +109,7 @@ The configuration must be define in the appsettings.json under a root section th
 
 ```json
 "KongRegister": {
+    "OnStartup" : True,
     "KongApiUrl": "http://YourKongApiUrl:8081",
     "KongApiKeyHeader": "YourApikeyHeader",
     "KongApiKey": "YourApiKey",
@@ -109,19 +122,23 @@ The configuration must be define in the appsettings.json under a root section th
   }
 ```
 
+Or define in environments variables in uppercase and start with `KR_` followed by a parameter name. Like `KR_ONSTARTUP=True`.
+
 See below all detailed parameters :
 
 Parameter  | Type | Description
 ------------- | ------------- |-------------
-`KongApiUrl`|`String`|Url of your Kong Admin Api. Don't forget the port if it's not standard (80 or 443) 
+`Disabled`|`Boolean`|Disble KongRegister service.
+`OnStratup`|`Boolean`|Enable registering on startup.
+`KongApiUrl`|`String`|Url of your Kong Admin Api. Don't forget the port if it's not standard (80 or 443).
 `KongApiKeyHeader`|`String`|Name of your header that contain your API Key (if your Kong server is secured).
 `KongApiKey`|`String`|Your API Key (if your Kong server is secured).
 `UpstreamId`|`String`|Kong Upstream Id that you want to register your application into.
-`TargetHostDiscovery`|`String`|Discovery method for your application host. Value must be `dynamic` or `static`
-`TargetHost`|`String`|Host name or IP of your application host. (if discovery method is static)
-`TargetPortDiscovery`|`String`|Discovery method for your application host port. Value must be `dynamic` or `static`
-`TargetPort`|`Integer`|Port of your application host (if discovery method is static)
-`TargetWeight`|`Integer`|Weight for the registered target in Kong server
+`TargetHostDiscovery`|`String`|Discovery method for your application host. Value must be `dynamic` or `static`.
+`TargetHost`|`String`|Host name or IP of your application host. (if discovery method is static).
+`TargetPortDiscovery`|`String`|Discovery method for your application host port. Value must be `dynamic` or `static`.
+`TargetPort`|`Integer`|Port of your application host (if discovery method is static).
+`TargetWeight`|`Integer`|Weight for the registered target in Kong server.
 
 ## Running
 
