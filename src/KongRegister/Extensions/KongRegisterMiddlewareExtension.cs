@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using KongRegister.Middlewares;
+﻿using KongRegister.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
 namespace KongRegister.Extensions
