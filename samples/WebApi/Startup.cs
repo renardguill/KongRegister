@@ -1,9 +1,8 @@
-﻿using KongRegister;
+﻿using KongRegister.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace WebApi
 {
@@ -19,21 +18,8 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<KongRegisterConfig>(Configuration.GetSection("KongRegister"));
-            services.PostConfigure<KongRegisterConfig>(kongConf =>
-            {
-                if (bool.TryParse(Configuration.GetValue<string>("KR_DISABLED"), out bool disabled))
-                {
-                    kongConf.Disabled = disabled;
-                }
 
-                if (bool.TryParse(Configuration.GetValue<string>("KR_ONSTARTUP"), out bool onStratup))
-                {
-                    kongConf.OnStartup = onStratup;
-                }
-
-            });
-            services.AddSingleton<IHostedService, KongRegisterService>();
+            services.ConfigureKongRegister(Configuration);
             services.AddMvc();
         }
 
@@ -45,6 +31,7 @@ namespace WebApi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseKongRegisterController();
             app.UseMvc();
         }
     }
