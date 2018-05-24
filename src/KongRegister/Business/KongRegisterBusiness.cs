@@ -1,19 +1,21 @@
-﻿using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
+using KongRegister.Business.Interfaces;
 using KongRegister.Extensions;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
-namespace KongRegister
+namespace KongRegister.Business
 {
-    public class KongRegisterService : ABackgroundService
+    public class KongRegisterBusiness : IKongRegisterBusiness
     {
         private readonly KongRegisterConfig _kongConfig;
         private readonly string _kongUrl;
@@ -21,7 +23,7 @@ namespace KongRegister
         private int _targetPort;
         private string _targetId;
 
-        private readonly ILogger<KongRegisterService> _logger;
+        private readonly ILogger<KongRegisterBackgroudService> _logger;
         private readonly IServer _server;
 
         /// <summary>
@@ -30,9 +32,8 @@ namespace KongRegister
         /// <param name="kongConfig"></param>
         /// <param name="logger"></param>
         /// <param name="server"></param>
-        public KongRegisterService(IOptions<KongRegisterConfig> kongConfig, ILogger<KongRegisterService> logger, IServer server)
+        public KongRegisterBusiness(IOptions<KongRegisterConfig> kongConfig, ILogger<KongRegisterBackgroudService> logger, IServer server)
         {
-
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _server = server ?? throw new ArgumentNullException(nameof(server));
             _kongConfig = kongConfig.Value ?? throw new ArgumentNullException(nameof(kongConfig));
@@ -47,52 +48,13 @@ namespace KongRegister
             }
 
             _kongUrl = $"{_kongConfig.KongApiUrl}/upstreams/{_kongConfig.UpstreamId}/targets";
-
         }
 
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task<string> RegisterAsync()
         {
-            if (_kongConfig.Disabled || !_kongConfig.OnStartup)
-            {
-                _logger.LogInformation($"KongRegisterService is disabled.");
-            }
-            else
-            {
-                _logger.LogInformation($"KongRegisterService is starting.");
-
-                stoppingToken.Register(() =>
-                        _logger.LogInformation($"KongRegister background task is stopping."));
-
-
-                if (!stoppingToken.IsCancellationRequested)
-                {
-                    _logger.LogInformation($"KongRegister background task is doing background work.");
-                    _targetId = await RegisterAsync();
-                }
-            }
-        }
-
-
-        public override async Task StopAsync(CancellationToken cancellationToken)
-        {
-            if (_kongConfig.Disabled || !_kongConfig.OnStartup)
-            {
-                _logger.LogInformation($"KongRegisterService is disabled.");
-            }
-            else
-            {
-                await UnregisterAsync(_targetId);
-            }
-        }
-
-
-        private async Task<string> RegisterAsync()
-        {
-
             _logger.LogInformation("Registering target in Kong");
 
-            if (_kongConfig.TargetHostDiscovery != null 
+            if (_kongConfig.TargetHostDiscovery != null
                 && _kongConfig.TargetHostDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
             {
                 using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
@@ -107,7 +69,7 @@ namespace KongRegister
                 _targetHost = _kongConfig.TargetHost;
             }
 
-            if (_kongConfig.TargetPortDiscovery != null 
+            if (_kongConfig.TargetPortDiscovery != null
                 && _kongConfig.TargetPortDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
             {
                 var features = _server.Features;
@@ -134,6 +96,7 @@ namespace KongRegister
                     {
                         var created = await response.Content.ReadAsAsync<dynamic>();
                         _logger.LogInformation($"Target {created.id} registered in Kong.");
+                        _targetId = created.id;
                         return created.id;
                     }
                     else
@@ -150,29 +113,43 @@ namespace KongRegister
                 throw;
             }
         }
-        private async Task UnregisterAsync(string targetId)
+
+        public async Task<bool> UnregisterAsync()
         {
-            _logger.LogInformation($"Unregistering target {targetId} from Kong");
+            _logger.LogInformation($"Unregistering target {_targetId} from Kong");
             try
             {
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add(_kongConfig.KongApiKeyHeader, _kongConfig.KongApiKey);
-                    var response = await client.DeleteAsync(_kongUrl + "/" + targetId);
+                    var response = await client.DeleteAsync(_kongUrl + "/" + _targetId);
                     if (response.StatusCode == HttpStatusCode.NoContent)
                     {
-                        _logger.LogInformation($"Target {targetId} ungregistred.");
+                        _logger.LogInformation($"Target {_targetId} ungregistred.");
+                        return true;
                     }
                     else
                     {
-                        _logger.LogError($"Error to unregistrering traget {targetId}");
+                        _logger.LogError($"Error to unregistrering traget {_targetId}");
+                        return false;
                     }
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Unregisteration failed");
+                return false;
             }
+        }
+
+        public bool OnStartup()
+        {
+            return _kongConfig.OnStartup;
+        }
+
+        public bool Disabled()
+        {
+            return _kongConfig.Disabled;
         }
     }
 }
