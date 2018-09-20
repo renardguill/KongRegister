@@ -19,10 +19,13 @@ namespace KongRegister.Extensions
         public static IServiceCollection ConfigureKongRegister(this IServiceCollection services, IConfiguration configuration, string sectionName = "KongRegister")
         {
             var kongRegisterConfig = configuration.GetSection(sectionName);
-            services.Configure<KongRegisterConfig>(kongRegisterConfig);
-            
-            var krc = kongRegisterConfig.Get<KongRegisterConfig>();
+            if (!kongRegisterConfig.Exists())
+            {
+                throw new Exception($"Section <{sectionName}> not found in your configuration.");
+            }
 
+            var krc = kongRegisterConfig.Get<KongRegisterConfig>();
+           
             // SI pas de config par défaut
             if (kongRegisterConfig[nameof(krc.Disabled)] == null) kongRegisterConfig[nameof(krc.Disabled)] = krc.Disabled.ToString();
             if (kongRegisterConfig[nameof(krc.OnStartup)] == null) kongRegisterConfig[nameof(krc.OnStartup)] = krc.OnStartup.ToString();
@@ -39,6 +42,9 @@ namespace KongRegister.Extensions
             }
 
             // Register
+
+            services.Configure<KongRegisterConfig>(kongRegisterConfig);
+
             if (!Convert.ToBoolean(kongRegisterConfig[nameof(krc.Disabled)]))
             {
                 services.AddSingleton<IKongRegisterBusiness, KongRegisterBusiness>();
