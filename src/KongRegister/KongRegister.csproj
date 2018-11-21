@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.0.1</Version>
+    <Version>2.0.2</Version>
     <Authors>Guillaume Renard</Authors>
     <Company></Company>
     <PackageProjectUrl>https://github.com/renardguill/KongRegister</PackageProjectUrl>
@@ -12,9 +12,10 @@
     <Description>Registering/unregistering your .Net Core micro-service in Kong API Gateway</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>Guillaume Renard</Copyright>
-    <PackageReleaseNotes>KongRegister v2.0.1
+    <PackageReleaseNotes>KongRegister v2.0.2
 
-Fix : throw correct exception when conf section is not found in configuration</PackageReleaseNotes>
+Add : Check if Kong is reachable
+Add : Check if upstreamID exist</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
