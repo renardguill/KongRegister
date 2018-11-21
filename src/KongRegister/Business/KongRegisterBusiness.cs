@@ -52,6 +52,31 @@ namespace KongRegister.Business
         {
             _logger.LogInformation("Registering target in Kong");
 
+            // check if Kong in reachable
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add(_kongConfig.KongApiKeyHeader, _kongConfig.KongApiKey);
+                var response = await client.GetAsync(_kongConfig.KongApiUrl);
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    _logger.LogError($"Kong in unreachable : {(int)response.StatusCode} {response.ReasonPhrase}");
+                    return string.Empty;
+                }
+            }
+
+            // check if upstream exist
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add(_kongConfig.KongApiKeyHeader, _kongConfig.KongApiKey);
+                var response = await client.GetAsync(_kongUrl);
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    _logger.LogError($"Upstream not found : {(int)response.StatusCode} {response.ReasonPhrase}");
+                    return string.Empty;
+                }
+            }
+
+
             if (_kongConfig.TargetHostDiscovery != null
                 && _kongConfig.TargetHostDiscovery.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -115,6 +140,31 @@ namespace KongRegister.Business
         public async Task<bool> UnregisterAsync()
         {
             _logger.LogInformation($"Unregistering target {_targetId} from Kong");
+            
+            // check if Kong in reachable
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add(_kongConfig.KongApiKeyHeader, _kongConfig.KongApiKey);
+                var response = await client.GetAsync(_kongConfig.KongApiUrl);
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    _logger.LogError($"Kong in unreachable : {(int)response.StatusCode} {response.ReasonPhrase}");
+                    return false;
+                }
+            }
+
+            // check if upstream exist
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add(_kongConfig.KongApiKeyHeader, _kongConfig.KongApiKey);
+                var response = await client.GetAsync(_kongUrl);
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    _logger.LogError($"Upstream not found : {(int)response.StatusCode} {response.ReasonPhrase}");
+                    return true;
+                }
+            }
+
             try
             {
                 using (var client = new HttpClient())
