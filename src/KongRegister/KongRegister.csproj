@@ -12,7 +12,6 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>Guillaume Renard</Copyright>
     <PackageReleaseNotes>KongRegister v3.0.0
-
 Migrate to dotnet core 3.1</PackageReleaseNotes>
   </PropertyGroup>
 
