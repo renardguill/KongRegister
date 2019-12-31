@@ -59,13 +59,13 @@ Shutdown it, it's now unregistered from Kong !
 
 KongRegister is compatible with:
 
-- Kong CE 0.12.x, 0.13.0
-- .Net Core 2.0
+- Kong CE 0.13.x, 0.14.x
+- .Net Core 3.1
 
 ## Prerequisites
 
 - A running Kong installation
-- A .Net Core 2.0 web application
+- A .Net Core 3.1 web application
 
 ## Discussions & Support
 

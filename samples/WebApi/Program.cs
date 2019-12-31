@@ -15,16 +15,15 @@ namespace WebApi
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            CreateDefaultBuilder(args).Build().Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHostBuilder CreateDefaultBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseKestrel(options =>
                 {
                     options.Listen(IPAddress.Any, 0);
-                }).PreferHostingUrls(false)
-                .Build();
+                }).PreferHostingUrls(false);
     }
 }
