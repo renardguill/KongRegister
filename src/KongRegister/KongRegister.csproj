@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.0.1</Version>
+    <Version>3.0.0</Version>
     <Authors>Guillaume Renard</Authors>
     <Company></Company>
     <PackageProjectUrl>https://github.com/renardguill/KongRegister</PackageProjectUrl>
@@ -12,20 +12,20 @@
     <Description>Registering/unregistering your .Net Core micro-service in Kong API Gateway</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>Guillaume Renard</Copyright>
-    <PackageReleaseNotes>KongRegister v2.0.1
+    <PackageReleaseNotes>KongRegister v3.0.0
 
-Fix : throw correct exception when conf section is not found in configuration</PackageReleaseNotes>
+Migrate to dotnet core 3.1</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="2.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.0" />
   </ItemGroup>
 
 </Project>
