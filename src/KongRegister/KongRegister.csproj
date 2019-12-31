@@ -8,7 +8,6 @@
     <Company></Company>
     <PackageProjectUrl>https://github.com/renardguill/KongRegister</PackageProjectUrl>
     <RepositoryUrl>https://github.com/renardguill/KongRegister</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/renardguill/KongRegister/master/resources/KongRegisterLogo.png</PackageIconUrl>
     <Description>Registering/unregistering your .Net Core micro-service in Kong API Gateway</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>Guillaume Renard</Copyright>
